@@ -1,0 +1,86 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <EditText
+        android:id="@+id/edit_message1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/label_latitude" />
+    
+    <EditText
+        android:id="@+id/edit_message2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dip"
+        android:hint="@string/label_longitude" />
+    
+    <EditText
+        android:id="@+id/edit_message3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dip"
+        android:hint="@string/label_address" />
+    
+    <TextView
+        android:id="@+id/latitudeval"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="112dp"
+        android:layout_marginTop="10dp"
+        android:text="Latitude" />
+
+        <TextView
+        android:id="@+id/longitudeval"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/latitudeval"
+        android:layout_below="@+id/latitudeval"
+        android:layout_marginTop="35dp"
+        android:text="Longitude" />
+
+        <TextView
+        android:id="@+id/address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/edit_message3"
+        android:layout_alignBottom="@+id/edit_message3"
+        android:layout_marginLeft="112dp"
+        android:text="Address" />
+    
+        <Button
+        android:layout_width="1000dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dip"
+        android:layout_weight="1"
+        android:text="@string/button_viewmap" 
+        android:onClick="ViewMap"/>
+        
+        <Button
+        android:layout_width="1000dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="250dip"
+        android:layout_weight="1"
+        android:text="@string/button_findplaces" 
+        android:onClick="PlacesAround"/>
+        
+        <Button
+        android:layout_width="1000dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="300dip"
+        android:layout_weight="1"
+        android:text="@string/button_shareLocation" 
+        android:onClick="ShareLocation"/>
+        
+        <ImageView
+        android:id="@+id/imageView1"
+        android:contentDescription="@string/img_guideme"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="375dip"
+        android:src="@drawable/img_guideme" />
+
+</RelativeLayout>

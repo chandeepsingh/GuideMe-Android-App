@@ -1,0 +1,282 @@
+package com.example.guideme;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.location.Location;
+import android.net.ParseException;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class PlacesAround extends Activity {
+
+	public final static String SLAT = "com.example.guideme.SLAT";
+	public final static String SLON = "com.example.guideme.SLON";
+	public final static String ELAT = "com.example.guideme.ELAT";
+	public final static String ELON = "com.example.guideme.ELON";
+	public final static String SADD = "com.example.guideme.SADD";
+	public final static String EADD = "com.example.guideme.EADD";
+	RouteInformation obj = new RouteInformation();
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_places_around);
+
+		Intent intent = getIntent();
+		String lat = intent.getStringExtra(LocationActivity.LAT);
+		String lon = intent.getStringExtra(LocationActivity.LON);
+		String startAdd = intent.getStringExtra(LocationActivity.ADD);
+
+		double startLatitude = Double.parseDouble(lat);
+		double startLongitude = Double.parseDouble(lon);
+
+		Location startPoint = new Location("startPoint");
+		startPoint.setLatitude(startLatitude);
+		startPoint.setLongitude(startLongitude);
+		Location endPoint = new Location("endPoint");
+
+		findPlaces(startLatitude, startLongitude, startPoint, endPoint, startAdd);
+
+	}
+
+
+	public void findPlaces(double startLatitude, double startLongitude, Location startPoint, Location endPoint, String startAdd)
+	{
+		String result = null;
+		InputStream is = null;
+		StringBuilder sb = null;
+		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
+		int id = 0;
+		String name = null;
+		String description = null;
+		String address = null;
+		String zipCode = null;
+		String endLatitude = null;
+		String endLongitude = null;		
+		String[] closestPlace = new String[7];
+		Double distanceBenchmark = 1609.34; //Value in meters equivalent to 1 mile
+
+		TextView nameval;
+		TextView descriptionval;
+		TextView addressval;
+		TextView distanceval;
+
+		nameval = (TextView) findViewById(R.id.nameval);
+		descriptionval = (TextView) findViewById(R.id.descriptionval);
+		addressval = (TextView) findViewById(R.id.addressval);
+		distanceval = (TextView) findViewById(R.id.distanceval);
+
+		try
+		{
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpPost httppost = new HttpPost("http://omega.uta.edu/~cxs5518/GuideMe/Home.php");
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			HttpResponse response = httpclient.execute(httppost);
+			HttpEntity entity = response.getEntity();
+			is = entity.getContent();
+		}
+		catch(Exception e)
+		{
+			Log.e("log_tag", "Error in http connection"+e.toString());
+		}
+
+		try
+		{
+			BufferedReader reader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"),8);
+			sb = new StringBuilder();
+			sb.append(reader.readLine() + "\n");
+			String line="0";
+
+			while ((line = reader.readLine()) != null) 
+			{
+				sb.append(line + "\n");
+			}
+
+			is.close();
+			result = sb.toString();
+
+		}
+		catch(Exception e)
+		{
+			Log.e("log_tag", "Error converting result "+ e.toString());
+		}
+
+		try
+		{
+			JSONArray jArray = new JSONArray(result);
+			JSONObject jsonData = null;
+
+			for(int i=0;i<jArray.length();i++)
+			{
+				jsonData = jArray.getJSONObject(i);
+				id = jsonData.getInt("Id");
+				name = jsonData.getString("Name");
+				description = jsonData.getString("Description");
+				address = jsonData.getString("Address");
+				zipCode = jsonData.getString("ZipCode");
+				endLatitude = jsonData.getString("Latitude");
+				endLongitude = jsonData.getString("Longitude");
+
+				endPoint.setLatitude(Double.parseDouble(endLatitude));
+				endPoint.setLongitude(Double.parseDouble(endLongitude));
+
+				double distanceInMeter = startPoint.distanceTo(endPoint);
+
+				if(distanceInMeter <= distanceBenchmark)
+				{
+					distanceBenchmark = distanceInMeter;
+					closestPlace[0] = Integer.toString(id);
+					closestPlace[1] = name;
+					closestPlace[2] = description;
+					closestPlace[3] = address;
+					closestPlace[4] = zipCode;
+					closestPlace[5] = endLatitude;
+					closestPlace[6] = endLongitude;
+				}
+			}
+
+			if(closestPlace[1] != null)
+			{
+				nameval.setText(closestPlace[1]);
+				descriptionval.setText(closestPlace[2]);
+				addressval.setText(closestPlace[3]);
+				distanceval.setText(clipValue((distanceBenchmark/1609.34),2) + " miles");
+
+				obj.setStartLatitude(startLatitude);
+				obj.setStartLongitude(startLongitude);
+				obj.setEndLatitude(Double.parseDouble(closestPlace[5]));
+				obj.setEndLongitude(Double.parseDouble(closestPlace[6]));
+				obj.setStartAddress(startAdd);
+				obj.setEndAddress(closestPlace[3]);
+			}
+			else
+			{
+				Toast.makeText(this, "No places found within 1 mile.", Toast.LENGTH_LONG).show();
+				obj.setStartLatitude(0.0);
+				obj.setStartLongitude(0.0);
+				obj.setEndLatitude(0.0);
+				obj.setEndLongitude(0.0);
+			}				
+		}
+
+		catch(JSONException e1)
+		{
+			Toast.makeText(getBaseContext(), "No Data Found", Toast.LENGTH_LONG).show();
+		}
+		catch (ParseException e1){
+			e1.printStackTrace();
+		}
+
+	}
+
+	public static double clipValue(double value, int places) 
+	{
+		if (places < 0) throw new IllegalArgumentException();
+		long factor = (long) Math.pow(10, places);
+		value = value * factor;
+		long tmp = Math.round(value);
+		return (double) tmp / factor;
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_places_around, menu);
+		return true;
+	}
+
+	public void RouteMap(View view) {
+		Double startLatitude = obj.getStartLatitude();
+		Double startLongitude = obj.getStartLongitude();
+		Double endLatitude = obj.getEndLatitude();
+		Double endLongitude = obj.getEndLongitude();
+		String startAddress = obj.getStartAddress();
+		String endAddress = obj.getEndAddress();
+
+		if((startLatitude == 0.0) || (startLongitude == 0.0) || (endLatitude == 0.0) || (endLongitude == 0.0))
+		{
+			Toast.makeText(this, "No places found within 1 mile.", Toast.LENGTH_LONG).show();
+		}
+		else
+		{
+			Intent intent = new Intent(this, RouteMap.class);
+			intent.putExtra(SLAT, startLatitude.toString());
+			intent.putExtra(SLON, startLongitude.toString());
+			intent.putExtra(ELAT, endLatitude.toString());
+			intent.putExtra(ELON, endLongitude.toString());
+			intent.putExtra(SADD, startAddress);
+			intent.putExtra(EADD, endAddress);
+
+			startActivity(intent);
+		}    	
+	}
+}
+
+class RouteInformation {
+
+	double startLatitude;
+	double startLongitude;
+	double endLatitude;
+	double endLongitude;
+	String startAddress;
+	String endAddress;
+
+	public String getStartAddress() {
+		return startAddress;
+	}
+	public void setStartAddress(String startAddress) {
+		this.startAddress = startAddress;
+	}
+	public String getEndAddress() {
+		return endAddress;
+	}
+	public void setEndAddress(String endAddress) {
+		this.endAddress = endAddress;
+	}
+	public double getStartLatitude() {
+		return startLatitude;
+	}
+	public void setStartLatitude(double startLatitude) {
+		this.startLatitude = startLatitude;
+	}
+	public double getStartLongitude() {
+		return startLongitude;
+	}
+	public void setStartLongitude(double startLongitude) {
+		this.startLongitude = startLongitude;
+	}
+	public double getEndLatitude() {
+		return endLatitude;
+	}
+	public void setEndLatitude(double endLatitude) {
+		this.endLatitude = endLatitude;
+	}
+	public double getEndLongitude() {
+		return endLongitude;
+	}
+	public void setEndLongitude(double endLongitude) {
+		this.endLongitude = endLongitude;
+	}	
+}
+

@@ -1,0 +1,29 @@
+package com.example.guideme;
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.view.Menu;
+
+public class MainActivity extends Activity {
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+    }
+<<<<<<< .mine
+    
+    public void FindLocation(View view) {
+        // Method for the find location button
+    	Intent intent = new Intent(this, FindLocActivity.class);
+    	startActivity(intent);
+    }
+=======
+>>>>>>> .r5
+}

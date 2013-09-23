@@ -1,0 +1,153 @@
+package com.example.guideme;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.location.Location;
+import android.net.ParseException;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class PlacesAround extends Activity {
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_places_around);
+        
+        Intent intent = getIntent();
+        String lat = intent.getStringExtra(LocationActivity.LAT);
+        String lon = intent.getStringExtra(LocationActivity.LON);
+        String add = intent.getStringExtra(LocationActivity.ADD);
+        
+        double latitude = Double.parseDouble(lat);
+        double longitude = Double.parseDouble(lon);
+        String result = null;
+		InputStream is = null;
+		StringBuilder sb = null;
+		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
+		int id;
+		String name = null;
+		String description = null;
+		String address = null;
+		String latNew = null;
+		String longNew = null;
+		String[] closestPlace = new String[6];
+		double distanceBenchmark = 1000.0;
+		
+		Location startPoint = new Location("startPoint");
+		startPoint.setLatitude(latitude);
+		startPoint.setLongitude(longitude);
+		Location endPoint = new Location("endPoint");
+		
+		TextView nameval;
+		TextView descriptionval;
+		TextView addressval;
+		
+		nameval = (TextView) findViewById(R.id.nameval);
+        descriptionval = (TextView) findViewById(R.id.descriptionval);
+        addressval = (TextView) findViewById(R.id.addressval);
+		
+		try{
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpPost httppost = new HttpPost("http://omega.uta.edu/~cxs5518/GuideMe/MainPage.php");
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			HttpResponse response = httpclient.execute(httppost);
+			HttpEntity entity = response.getEntity();
+			is = entity.getContent();
+		}catch(Exception e){
+			Log.e("log_tag", "Error in http connection"+e.toString());
+		}
+	
+		try{
+			BufferedReader reader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"),8);
+			sb = new StringBuilder();
+			sb.append(reader.readLine() + "\n");
+			String line="0";
+	     
+			while ((line = reader.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+			
+			is.close();
+			result = sb.toString();
+			
+		}catch(Exception e){
+			Log.e("log_tag", "Error converting result "+e.toString());
+		}
+		
+		try{
+			JSONArray jArray = new JSONArray(result);
+			JSONObject json_data = null;
+      	
+			for(int i=0;i<jArray.length();i++){
+				json_data = jArray.getJSONObject(i);
+				id = json_data.getInt("Id");
+				name = json_data.getString("Name");
+				description = json_data.getString("Description");
+				address = json_data.getString("Address");
+				latNew = json_data.getString("Latitude");
+				longNew = json_data.getString("Longitude");
+				
+				endPoint.setLatitude(Double.parseDouble(latNew));
+				endPoint.setLongitude(Double.parseDouble(longNew));
+				
+				double distanceInMeter = startPoint.distanceTo(endPoint);
+				double distanceInFeet = distanceInMeter * 3.28084;
+				
+				if(distanceInFeet <= distanceBenchmark)
+				{
+					distanceBenchmark = distanceInFeet;
+					closestPlace[0] = Integer.toString(id);
+					closestPlace[1] = name;
+					closestPlace[2] = description;
+					closestPlace[3] = address;
+					closestPlace[4] = latNew;
+					closestPlace[5] = longNew;
+				}
+			}
+			
+			nameval.setText(closestPlace[1]);
+			descriptionval.setText(closestPlace[2]);
+			addressval.setText(closestPlace[3]);
+			//Toast.makeText(this, closestPlace[1], Toast.LENGTH_LONG).show();
+						
+		}catch(JSONException e1){
+			Toast.makeText(getBaseContext(), "No Data Found", Toast.LENGTH_LONG).show();
+		}catch (ParseException e1){
+			e1.printStackTrace();
+		}
+	}
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_places_around, menu);
+        return true;
+    }
+    
+    public void RouteMap(View view) {
+    	Intent intent = new Intent(this, RouteMap.class);
+	    startActivity(intent);	
+    	
+    }
+}

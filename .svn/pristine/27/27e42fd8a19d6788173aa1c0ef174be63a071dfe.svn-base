@@ -1,0 +1,103 @@
+package com.example.guideme;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.view.Menu;
+import android.widget.Toast;
+
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.ItemizedOverlay;
+import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapView;
+import com.google.android.maps.OverlayItem;
+
+
+public class ViewMap extends MapActivity {
+
+	MapView map;
+	ArrayList<OverlayItem> overlayItemArray;
+	
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+
+    	super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_view_map);
+        
+        Intent intent = getIntent();
+        String lat = intent.getStringExtra(LocationActivity.LAT);
+        String lon = intent.getStringExtra(LocationActivity.LON);
+        
+        double latitude = Double.parseDouble(lat);
+        double longitude = Double.parseDouble(lon);
+        Toast.makeText(this, "Latitude: "+ latitude +"\n" + "Longitude: " + longitude, Toast.LENGTH_LONG).show();
+
+        map = (MapView)findViewById(R.id.mvMain);
+        map.setSatellite(false);
+        //map.setStreetView(false);
+        map.getController().setCenter(getPoint(latitude,longitude));
+        map.getController().setZoom(18);
+	    map.setBuiltInZoomControls(true);
+	    
+	    Drawable marker = getResources().getDrawable(android.R.drawable.ic_delete);
+	    marker.setBounds(0, 0, marker.getIntrinsicWidth(), marker.getIntrinsicHeight());
+	    map.getOverlays().add(new InterestingLocations(marker, latitude, longitude));
+	    
+    }
+     
+    private GeoPoint getPoint(double lat, double lon) 
+    {
+      return(new GeoPoint((int)(lat*1000000.0), (int)(lon*1000000.0))); 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_view_map, menu);
+        return true;
+    }
+
+	@Override
+	protected boolean isRouteDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+ class InterestingLocations extends ItemizedOverlay<OverlayItem>{
+		  
+		  private List<OverlayItem> locations = new ArrayList<OverlayItem>();
+		  private Drawable marker;
+
+		  public InterestingLocations(Drawable defaultMarker, double Latitude, double Longitude) {
+		   super(defaultMarker);
+		   // TODO Auto-generated constructor stub
+		   this.marker=defaultMarker;
+		   // create locations of interest
+		   GeoPoint myPlace = new GeoPoint((int)(Latitude*1000000.0), (int)(Longitude*1000000.0));
+		   locations.add(new OverlayItem(myPlace , "My Place", "My Place"));
+		   populate();
+		  }
+
+		  @Override
+		  protected OverlayItem createItem(int i) {
+		   // TODO Auto-generated method stub
+		   return locations.get(i);
+		  }
+
+		  @Override
+		  public int size() {
+		   // TODO Auto-generated method stub
+		   return locations.size();
+		  }
+
+		  @Override
+		  public void draw(Canvas canvas, MapView mapView, boolean shadow) {
+		   // TODO Auto-generated method stub
+		   super.draw(canvas, mapView, shadow);
+		   boundCenterBottom(marker);
+		  }
+		 }
+}

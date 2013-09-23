@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">GuideMe</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">GuideMe! Places areound you</string>
+    <string name="button_location">Locate Me!</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_find_loc">FindLocActivity</string>
+    <string name="title_activity_find_location">FindLocationActivity</string>
+
+</resources>

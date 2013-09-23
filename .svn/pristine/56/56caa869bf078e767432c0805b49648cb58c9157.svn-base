@@ -1,0 +1,31 @@
+package com.example.guideme;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.widget.Toast;
+
+public class PlacesAround extends Activity {
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_places_around);
+        
+        Intent intent = getIntent();
+        String lat = intent.getStringExtra(LocationActivity.LAT);
+        String lon = intent.getStringExtra(LocationActivity.LON);
+        String add = intent.getStringExtra(LocationActivity.ADD);
+        
+        double latitude = Double.parseDouble(lat);
+        double longitude = Double.parseDouble(lon);
+        Toast.makeText(this, "Your location: " + add, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_places_around, menu);
+        return true;
+    }
+}

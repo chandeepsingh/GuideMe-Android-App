@@ -1,0 +1,230 @@
+package com.example.guideme;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class LocationActivity extends Activity implements LocationListener{
+
+	private LocationManager locManager;
+	private String provider;
+	private TextView latitudeVal;
+	private TextView longitudeVal;
+	private TextView addressVal;
+	private TextView editMessageLat;
+	private TextView editMessageLon;
+	private TextView editMessageAdd;
+
+	public Geocoder geocoder;
+	public final static String LAT = "com.example.guideme.LAT";
+	public final static String LON = "com.example.guideme.LON";
+	public final static String ADD = "com.example.guideme.ADD";
+	boolean checkPlaces = false;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_location);
+
+		editMessageLat = (TextView) findViewById(R.id.edit_message1);
+		editMessageLat.setKeyListener(null);
+		editMessageLat.setEnabled(false);
+		editMessageLon = (TextView) findViewById(R.id.edit_message2);
+		editMessageLon.setKeyListener(null);
+		editMessageLon.setEnabled(false);
+		editMessageAdd = (TextView) findViewById(R.id.edit_message3);
+		editMessageAdd.setKeyListener(null);
+		editMessageAdd.setEnabled(false);
+
+		locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		latitudeVal = (TextView) findViewById(R.id.latitudeval);
+		longitudeVal = (TextView) findViewById(R.id.longitudeval);
+		addressVal = (TextView) findViewById(R.id.address);
+		Criteria criteria = new Criteria();
+		provider = locManager.getBestProvider(criteria, false);
+		Location loc = locManager.getLastKnownLocation(provider);
+		geocoder = new Geocoder(this,Locale.ENGLISH);
+
+		if(loc == null)
+		{
+			latitudeVal.setText("No provider");
+			Toast.makeText(this, "No Provider available: " + provider, Toast.LENGTH_LONG).show();
+		}   
+	}
+
+	@Override
+	protected void onResume(){
+		super.onResume();
+		locManager.requestLocationUpdates(provider, 400, 1, this);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		locManager.removeUpdates(this);
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+
+		/* Test coordinates 
+		Cooper Chase: 32.7332917, -97.1152303
+		Six Flags: 32.7524703, -97.0651887 
+		 */		
+
+		double lat = (double) (location.getLatitude());
+		double lon = (double) (location.getLongitude());       
+		lat = clipValue(lat,7);
+		lon = clipValue(lon,7);        
+		latitudeVal.setText(String.valueOf(lat));
+		longitudeVal.setText(String.valueOf(lon));
+
+		String add = getAddress(lat,lon);
+		if(add!="")
+		{
+			addressVal.setText(add);
+		}
+		else
+		{
+			addressVal.setText("Address cannot be found!");
+		}		
+	}
+
+	public static double clipValue(double value, int places) 
+	{
+		if (places < 0) throw new IllegalArgumentException();
+		long factor = (long) Math.pow(10, places);
+		value = value * factor;
+		long tmp = Math.round(value);
+		return (double) tmp / factor;
+	}
+
+	public String getAddress(Double lat, Double lon)
+	{
+		List<Address> addresses = null;
+		String addressText = "";
+
+		try 
+		{
+			addresses = geocoder.getFromLocation(lat,lon,1);
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+
+		if(addresses != null && addresses.size() > 0 )
+		{
+			Address address = addresses.get(0);
+			addressText = String.format("%s, %s, %s, %s",
+					address.getMaxAddressLineIndex() > 0 ? address.getAddressLine(0) : "",
+							address.getLocality(),
+							address.getCountryName(),
+							address.getPostalCode());
+		}
+		return addressText;	 
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_location, menu);
+		return true;
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		// TODO Auto-generated method stub
+		Toast.makeText(this, "Disable Provider"+ provider, Toast.LENGTH_LONG).show();
+
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
+		Toast.makeText(this, "Enabled Provider"+ provider, Toast.LENGTH_LONG).show();
+
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void PlacesAround(View view) 
+	{
+		String lat = latitudeVal.getText().toString();
+		String lon = longitudeVal.getText().toString();
+		String add = addressVal.getText().toString();
+
+		if(lon.equals("Longitude"))
+		{
+			Toast.makeText(this, "Location not available. Please try again.", Toast.LENGTH_LONG).show();
+		}
+		else
+		{
+			Intent intent = new Intent(this, PlacesAround.class);
+			intent.putExtra(LAT, lat);
+			intent.putExtra(LON, lon);
+			intent.putExtra(ADD, add);
+			startActivity(intent);	
+		}
+	}
+
+	public void ViewMap(View view) 
+	{
+		String lat = latitudeVal.getText().toString();
+		String lon = longitudeVal.getText().toString();
+		String add = addressVal.getText().toString();
+
+		if(lon.equals("Longitude"))
+		{
+			Toast.makeText(this, "Location not available. Please try again.", Toast.LENGTH_LONG).show();
+		}
+		else
+		{
+			Intent intent = new Intent(this, ViewMap.class);
+			intent.putExtra(LAT, lat);
+			intent.putExtra(LON, lon);
+			intent.putExtra(ADD, add);
+			startActivity(intent);	
+		}
+	}
+
+	public void ShareLocation(View view)
+	{
+		String lat = latitudeVal.getText().toString();
+		String lon = longitudeVal.getText().toString();
+		String add = addressVal.getText().toString();
+		String shareSubject = "You gotta check out my location! - Sent using GuideMe!";
+		String shareBody = "I am at: " + add + "\nLatitude: " + lat + "\nLongitude: " + lon;
+
+		if(lon.equals("Longitude"))
+		{
+			Toast.makeText(this, "Location not available. Please try again.", Toast.LENGTH_LONG).show();
+		}
+		else
+		{
+			Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+			sharingIntent.setType("text/plain");
+			sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSubject);
+			sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+			startActivity(Intent.createChooser(sharingIntent, "GuideMe! Share location via"));
+		}
+	}
+}

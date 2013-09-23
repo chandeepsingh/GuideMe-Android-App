@@ -1,0 +1,45 @@
+package com.example.guideme;
+
+import android.os.Bundle;
+import android.view.Menu;
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapView;
+
+public class ViewMap extends MapActivity {
+
+	MapView map;
+	
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+
+    	super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_view_map);
+        
+        map = (MapView)findViewById(R.id.mvMain);
+        
+        // Pin point location.
+        // Fix static location input.
+        //map.getController().setCenter(getPoint(lat,lon));
+        map.getController().setCenter(getPoint(32.732215,-97.113765));
+	    map.getController().setZoom(16);
+	    map.setBuiltInZoomControls(true);
+    }
+     
+    private GeoPoint getPoint(double lat, double lon) 
+    {
+      return(new GeoPoint((int)(lat*1000000.0), (int)(lon*1000000.0))); 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_view_map, menu);
+        return true;
+    }
+
+	@Override
+	protected boolean isRouteDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+}

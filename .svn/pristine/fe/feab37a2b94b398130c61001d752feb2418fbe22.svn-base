@@ -1,0 +1,98 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    	<EditText 
+    	android:id="@+id/edit_message1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/label_name" />
+    
+    	<EditText 
+    	android:id="@+id/edit_message2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/label_description" 
+        android:layout_marginTop="50dip"/>
+    
+    	<EditText 
+    	android:id="@+id/edit_message3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/label_address" 
+        android:layout_marginTop="100dip"/>
+    
+    	<EditText 
+    	android:id="@+id/edit_message4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/label_distance" 
+        android:layout_marginTop="150dip"/>
+    
+    	<TextView
+        android:id="@+id/nameval"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="85dp"
+        android:layout_marginTop="10dp"
+        android:text="Name" />
+
+    	<TextView
+        android:id="@+id/descriptionval"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true" 
+        android:layout_alignParentTop="true"      
+        android:layout_marginLeft="125dp"
+        android:layout_marginTop="60dp"
+        android:text="Description" />
+
+   		<TextView
+        android:id="@+id/addressval"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true" 
+        android:layout_alignParentTop="true"      
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="110dp"
+        android:text="Address" />
+    
+    	<TextView
+        android:id="@+id/distanceval"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true" 
+        android:layout_alignParentTop="true"      
+        android:layout_marginLeft="220dp"
+        android:layout_marginTop="160dp"
+        android:text="Distance" />
+    
+        <Button
+        android:layout_width="1000dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="250dip"
+        android:layout_weight="1"
+        android:text="@string/button_route" 
+        android:onClick="RouteMap"/>
+        
+        <Button
+        android:layout_width="1000dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="300dip"
+        android:layout_weight="1"
+        android:text="@string/button_invite" 
+        android:onClick="InviteSomeone"/>
+        
+        <ImageView
+        android:id="@+id/imageView1"
+        android:contentDescription="@string/img_guideme"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="375dip"
+        android:src="@drawable/img_guideme" />
+        
+</RelativeLayout>
+

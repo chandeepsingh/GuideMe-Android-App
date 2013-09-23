@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+	<!-- android:background="@drawable/img_guideme" >  -->
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dip"
+        android:onClick="FindLocation"
+        android:text="@string/button_location" />
+    
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dip"
+        android:onClick="ReportBugs"
+        android:text="@string/button_reportBug" />
+        
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dip"
+        android:onClick="AboutGuideMe"
+        android:text="@string/button_aboutGuideMe" />
+
+
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:contentDescription="@string/img_guideme"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="100dip"
+        android:src="@drawable/img_guideme" />
+
+</LinearLayout>

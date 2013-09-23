@@ -1,0 +1,67 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <EditText android:id="@+id/edit_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/label_latitude" />
+    
+    <EditText android:id="@+id/edit_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/label_longitude" 
+        android:layout_marginTop="50dip"/>
+    
+    <EditText android:id="@+id/edit_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/label_address" 
+        android:layout_marginTop="100dip"/>
+    
+    <TextView
+        android:id="@+id/latitudeval"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="112dp"
+        android:layout_marginTop="10dp"
+        android:text="." />
+
+    <TextView
+        android:id="@+id/longitudeval"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/latitudeval"
+        android:layout_below="@+id/latitudeval"
+        android:layout_marginTop="35dp"
+        android:text="." />
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/edit_message"
+        android:layout_alignBottom="@+id/edit_message"
+        android:layout_marginLeft="112dp"
+        android:text="." />
+    
+        <Button
+        android:layout_width="1000dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="300dip"
+        android:layout_weight="1"
+        android:text="@string/button_viewmap" 
+        android:onClick="ViewMap"/>
+        
+        <Button
+        android:layout_width="1000dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="400dip"
+        android:layout_weight="1"
+        android:text="@string/button_findplaces" 
+        android:onClick="PlacesAround"/>
+
+</RelativeLayout>

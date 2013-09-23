@@ -1,0 +1,42 @@
+<resources>
+
+    <string name="app_name">GuideMe!</string>
+    <string name="title_activity_places_around">GuideMe! Nearest Place</string>
+    <string name="title_activity_view_map">GuideMe! Map View</string>
+    <string name="title_activity_route_map">GuideMe! Route to Location</string>
+    <string name="title_activity_location">GuideMe! Your Location</string> 
+    <string name="title_activity_main">GuideMe! Places around You</string>
+    <string name="menu_settings">Settings</string>
+        
+    <string name="enable_gps">Enable GPS</string>
+    <string name="enable_gps_dialog">GPS provider not enabled. Would you like to enable it?</string>
+    <string name="latlng">Lat/Long:</string>
+    <string name="unknown">--Unknown--</string>
+    <string name="not_support_gps">GPS provider not supported</string>
+    <string name="not_support_network">Network provider not supported</string>
+    <string name="use_fine_provider">Fine-grain provider</string>
+    <string name="use_both_providers">Both providers</string>
+    
+    <string name="label_latitude">Latitude:</string>
+    <string name="label_longitude">Longitude:</string>
+    <string name="label_name">Name:</string>
+    <string name="label_description">Description:</string>
+    <string name="label_distance">Distance to destination:</string>
+    <string name="label_address">Address:</string>
+    <string name="label_startAdd">From:  </string>
+    <string name="label_endAdd">To: </string>
+    <string name="label_directions">Directions: </string>
+    
+    <string name="button_location">Locate Me!</string>
+    <string name="button_findplaces">Find places around me!</string>
+    <string name="button_viewmap">Map my Location!</string>
+    <string name="button_route">Route to nearest Location!</string>
+    <string name="button_shareLocation">Share my Location!</string>
+    <string name="button_invite">Invite someone to join you!</string>
+    <string name="button_reportBug">Report a Bug!</string>
+    <string name="button_aboutGuideMe">About GuideMe!</string>
+    
+    <string name="img_guideme">GuideMe!</string>
+
+
+</resources>
