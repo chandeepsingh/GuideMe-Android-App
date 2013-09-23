@@ -49,8 +49,7 @@ public class MainActivity extends Activity {
 				"interest around them.\n\n" +
 				"Thank you for using GuideMe!\n\n" +
 				"Email: guideme.app@gmail.com\n\n" +
-				"Developers: Chandeep Singh, Kumar Pratap Singh, Sundeep Reddy, " +
-				"Surya Pratap Chand & Vikram Muskula ";
+				"Developer: Chandeep Singh";
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(aboutMessage)
